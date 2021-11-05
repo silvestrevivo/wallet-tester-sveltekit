@@ -1,5 +1,5 @@
-import inject from '@rollup/plugin-inject';
 import preprocess from 'svelte-preprocess';
+import commonjs from '@rollup/plugin-commonjs';
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
@@ -18,12 +18,12 @@ const config = {
 				include: ['buffer/index.js']
 			},
 			plugins: [
-				{
-					...inject({
-						Buffer: ['buffer/index.js', 'Buffer']
-					}),
-					enforce: 'pre'
-				}
+				commonjs({
+					include: 'node_modules/**',
+					namedExports: {
+						'node_modules/buffer/index.js': ['Buffer']
+					}
+				})
 			]
 		})
 	}
