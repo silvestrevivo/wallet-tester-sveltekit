@@ -1,5 +1,6 @@
 import preprocess from 'svelte-preprocess';
 import commonjs from '@rollup/plugin-commonjs';
+import inject from '@rollup/plugin-inject';
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
@@ -12,17 +13,20 @@ const config = {
 		vite: () => ({
 			define: {
 				global: 'window',
-				process: 'window'
+				process: {}
 			},
 			optimizeDeps: {
 				include: ['buffer/index.js']
 			},
 			plugins: [
+				{
+					...inject({
+						Buffer: ['buffer/index.js', 'Buffer']
+					}),
+					enforce: 'pre'
+				},
 				commonjs({
-					include: 'node_modules/**',
-					namedExports: {
-						'node_modules/buffer/index.js': ['Buffer']
-					}
+					include: 'node_modules/**'
 				})
 			]
 		})
